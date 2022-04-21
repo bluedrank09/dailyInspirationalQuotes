@@ -24,6 +24,7 @@ def get_random_quote(quotes_file = "quotes.csv"):
     except Exception as error:
         raise error
 
+
 if __name__ == "__main__":
     try:
         logger.info("going inside quote func")
