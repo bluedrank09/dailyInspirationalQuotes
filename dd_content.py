@@ -1,8 +1,47 @@
-def get_random_quote():
-    pass
+import sys 
+import inspect
+import logging 
+import csv # comma seperated value
+import random
+from urllib import request # opens the url from the api request
+import json # what is used for gettting the info from the url 
+import datetime 
 
-def get_weather_forecast():
-    pass
+logging.basicConfig(level = logging.INFO, format = "[{asctime} : {funcName} : {lineno} : {message}]", style = '{' ) # configuring logger
+logger = logging.getLogger("EMAILBLAST") # making object called emailblast
+logger.info("INITIATING LOGGER") # initiating and checking logger
+
+#getting a random quote from csv file of marvel quotes
+def get_random_quote(quotes_file = "quotes.csv"): # telling the code to use the quotes.csv file with marvel quotes
+    try:
+        logger.info("inside quote func") 
+        with open(quotes_file) as csvfile: # using the csv file to get quote and storing it as a key value pair (dictionaries)
+                quotes = [{"quote": line[0], # finding quote
+                            "author": line[1], # finding author
+                            "movie": line[2]} for line in csv.reader(csvfile, delimiter = "|") ] # finding movie and changing the delimiter to a |
+
+        logger.info("about to print quote")
+        #print(f"Quote is {random.choice(quotes)}") 
+        logger.info("printed quote")
+        return(random.choice(quotes))    # sending chose quote back                   
+
+    except Exception as error:
+        raise error
+
+
+def get_weather_forecast(coords = {'lat': -36.848461, 'lon': 174.763336}): # auklands geographical coordinates
+    try:
+        api_key = '8d06b1d290a4f3a70e5d67975695bfd6' # api key
+        url = f'https://api.openweathermap.org/data/2.5/forecast?lat={coords["lat"]}&lon={coords["lon"]}&appid={api_key}&units=metric' #url json file is using
+        data = json.load(request.urlopen(url)) # getting the info fro the url and stroing it in data - json.load parses json text into a python dictionary
+
+        forecast = {'city': data['city']['name'], # city name
+                    'country': data['city']['country'],  # country name
+                    'periods': list()} # list to hold forecast data for future periods of time
+
+
+    except Exception as error:
+        raise error
 
 def get_twitter_trend():
     pass
@@ -11,4 +50,14 @@ def get_wikipedia_article():
     pass
 
 if __name__ == "__main__":
-    passs
+    try:
+        print(f"Daily quote")
+        logger.info("going inside quote func")
+        quote = get_random_quote()
+
+    except Exception as error:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        logger.info(f"{inspect.stack()[0][3]} : {exc_tb.tb_lineno} : {error}")
+
+    finally:
+        print(f":D")
