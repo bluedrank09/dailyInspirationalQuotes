@@ -21,7 +21,7 @@ def get_random_quote(quotes_file = "quotes.csv"): # telling the code to use the 
                             "movie": line[2]} for line in csv.reader(csvfile, delimiter = "|") ] # finding movie and changing the delimiter to a |
 
         logger.info("about to print quote")
-        #print(f"Quote is {random.choice(quotes)}") 
+        print(f"Quote is {random.choice(quotes)}") 
         logger.info("printed quote")
         return(random.choice(quotes))    # sending chose quote back                   
 
@@ -39,6 +39,13 @@ def get_weather_forecast(coords = {'lat': -36.848461, 'lon': 174.763336}): # auk
                     'country': data['city']['country'],  # country name
                     'periods': list()} # list to hold forecast data for future periods of time
 
+        for period in data['list'][0:9]:
+            forecast['periods'].append({'timestamp': datetime.datetime.fromtimestamp(period['dt']),
+                                        'temp': round(period['main']['temp']),
+                                        'description': period['weather'][0]['description'].title(),
+                                        'icon': f'http://openweathermap.org/img/wn/{period["weather"][0]["icon"]}'})
+
+        return(forecast)
 
     except Exception as error:
         raise error
@@ -54,6 +61,26 @@ if __name__ == "__main__":
         print(f"Daily quote")
         logger.info("going inside quote func")
         quote = get_random_quote()
+
+        forecast = get_weather_forecast()
+
+        if forecast:
+            print(f'Weather forecast for {forecast["city"]}, {forecast["country"]} is : ')
+            for period in forecast['periods']:
+                print(f'{period["timestamp"]} | {period["temp"]}°C, | {period["description"]}')
+
+        sydney = {'lat': 33.8688, 'lon': 151.2093}
+        forecast = get_weather_forecast(coords = sydney)
+        if forecast:
+            print(f'Weather forecast for {forecast["city"]}, {forecast["country"]} is : ')
+            for period in forecast['periods']:
+                print(f'{period["timestamp"]} | {period["temp"]}°C, | {period["description"]}')  
+
+        invalid = {'lat': 1234.5678, 'lon': 1234.5678}
+        forecast = get_weather_forecast(coords = invalid)  
+        if forecast is None:
+            print("Weather forecast for invalid coordinates is None.") 
+
 
     except Exception as error:
         exc_type, exc_obj, exc_tb = sys.exc_info()
