@@ -6,6 +6,7 @@ import random
 from urllib import request # opens the url from the api request
 import json # what is used for gettting the info from the url 
 import datetime 
+import ssl
 
 logging.basicConfig(level = logging.INFO, format = "[{asctime} : {funcName} : {lineno} : {message}]", style = '{' ) # configuring logger
 logger = logging.getLogger("EMAILBLAST") # making object called emailblast
@@ -55,6 +56,7 @@ def get_twitter_trend():
 
 def get_wikipedia_article():
     try:
+        ssl._create_default_https_context = ssl._create_unverified_context
         data = json.load(request.urlopen('https://en.wikipedia.org/api/rest_v1/page/random/summary'))
 
         return {'title': data['title'],
@@ -84,11 +86,6 @@ if __name__ == "__main__":
             print(f'Weather forecast for {forecast["city"]}, {forecast["country"]} is : ')
             for period in forecast['periods']:
                 print(f'{period["timestamp"]} | {period["temp"]}°C, | {period["description"]}')  
-
-        # invalid = {'lat': 1234.5678, 'lon': 1234.5678}
-        # forecast = get_weather_forecast(coords = invalid)  
-        # if forecast is None:
-        #     print("Weather forecast for invalid coordinates is None.") 
 
         article = get_wikipedia_article()
 
