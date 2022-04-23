@@ -54,7 +54,16 @@ def get_twitter_trend():
     pass
 
 def get_wikipedia_article():
-    pass
+    try:
+        data = json.load(request.urlopen('https://en.wikipedia.org/api/rest_v1/page/random/summary'))
+
+        return {'title': data['title'],
+                'extract': data['extract'],
+                'url': data['content_urls']['desktop']['page']}
+
+
+    except Exception as error:
+        raise error
 
 if __name__ == "__main__":
     try:
@@ -76,10 +85,15 @@ if __name__ == "__main__":
             for period in forecast['periods']:
                 print(f'{period["timestamp"]} | {period["temp"]}°C, | {period["description"]}')  
 
-        invalid = {'lat': 1234.5678, 'lon': 1234.5678}
-        forecast = get_weather_forecast(coords = invalid)  
-        if forecast is None:
-            print("Weather forecast for invalid coordinates is None.") 
+        # invalid = {'lat': 1234.5678, 'lon': 1234.5678}
+        # forecast = get_weather_forecast(coords = invalid)  
+        # if forecast is None:
+        #     print("Weather forecast for invalid coordinates is None.") 
+
+        article = get_wikipedia_article()
+
+        if article:
+            print(f'{article["title"]}, {article["url"]}, {article["extract"]}')
 
 
     except Exception as error:
