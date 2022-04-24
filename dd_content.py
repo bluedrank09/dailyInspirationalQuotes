@@ -51,9 +51,6 @@ def get_weather_forecast(coords = {'lat': -36.848461, 'lon': 174.763336}): # auk
     except Exception as error:
         raise error
 
-def get_twitter_trend():
-    pass
-
 def get_wikipedia_article():
     try:
         ssl._create_default_https_context = ssl._create_unverified_context
@@ -90,7 +87,7 @@ if __name__ == "__main__":
         article = get_wikipedia_article()
 
         if article:
-            print(f'{article["title"]}, {article["url"]}, {article["extract"]}')
+            print(f'{article["title"]}, {article["extract"]}, {article["url"]}')
 
 
     except Exception as error:
