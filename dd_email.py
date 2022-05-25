@@ -3,6 +3,10 @@ import inspect
 import logging as logger
 import dd_content
 import datetime
+import ssl
+from email.message import EmailMessage
+import smtplib
+
 
 class dailyDigestEmail:
 
@@ -10,6 +14,22 @@ class dailyDigestEmail:
         self.content = {'quote': {'include': True, 'content': dd_content.get_random_quote()},
                         'weather': {'include': True, 'content': dd_content.get_weather_forecast()},
                         'wikipedia': {'include': True, 'content': dd_content.get_wikipedia_article()}}
+
+        self.recipients_list = ['mayababu73@gmail.com']
+
+        self.sender_credentials = ['email' : 'yeetusbro09@gmail.com'
+                                    'password' : 'J0tunh#im']
+
+    def send_the_email(self):
+        msg = EmailMessage()
+        today = datetime.date.today()
+        msg['Subject'] = f"DAILY DIGEST "
+        msg["From"] = self.sender_credentials['email']
+        msg['To'] = ','.join(self.recipients_list)
+
+        
+
+
 
     def send_email(self):
         pass
@@ -54,7 +74,7 @@ class dailyDigestEmail:
             html += f"""
         <tr>
             <td>
-                {forecast['timestamp'].strftime('%d %b %H%M')}
+                {forecast['timestamp'].today:%B, %d, %Y}
             </td>
             <td>
                 <img src="{forecast['icon']}">
@@ -85,11 +105,28 @@ class dailyDigestEmail:
     </body>
 </html>
                 """
-
+        return {'text': text, 'html': html}
 
 if __name__ == "__main__":
     try:
-        pass
+        email = dailyDigestEmail()
+
+        ##### test format_message() #####
+        print('Testing email body generation : ')
+        message = email.format_message()
+
+        # print Plaintext and HTML messages
+        print('Normal text email body is...')
+        print(message['text'])
+        print('------------------------------------------------------------')
+        print('HTML email body is : ')
+        print(message['html'])
+
+        # save Plaintext and HTML messages to file
+        with open('message_text.txt', 'w', encoding='utf-8') as f:
+            f.write(message['text'])
+        with open('message_html.html', 'w', encoding='utf-8') as f:
+            f.write(message['html'])
 
     except Exception as error:
         exc_type, exc_obj, exc_tb = sys.exc_info()
